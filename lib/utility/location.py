@@ -3,7 +3,7 @@ from ClassicAssist.UO import UOMath
 from ClassicAssist.UO.Data import Direction, MapInfo , Statics, TileFlags
 from System import Convert
 
-from troubleshoot.logger import Logger
+from diagnostic.logger import Logger
 
 
 class Location:
