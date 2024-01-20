@@ -25,7 +25,7 @@ class StockService:
             Pause(self.item_delay)
             self.need_open = False # Flip bit
 
-        if material.minPackAmt <= CountType(material.graphic, destination, material.hue):
+        if material.min_pack_amount <= CountType(material.graphic, destination, material.hue):
             Logger.Trace("Sufficient amount of {}. Skipping restock.".format(material.name))
             return True
     
@@ -35,8 +35,8 @@ class StockService:
             Logger.Error("OUT OF {} !".format(material.name).upper())
             return False
 
-        Logger.Trace("Attempting to move {}".format(material.restockAmt))
-        MoveType(material.graphic, self.restock_container, destination, -1, -1, -1, material.hue, material.restockAmt)
+        Logger.Trace("Attempting to move {}".format(material.restock_amount))
+        MoveType(material.graphic, self.restock_container, destination, -1, -1, -1, material.hue, material.restock_amount)
         Pause(self.item_delay)
 
         return True
@@ -46,5 +46,5 @@ class StockService:
         Logger.Debug("Unloading {} ({})".format(material.name, self.restock_container))
 
         # Pause(self.short_pause)
-        MoveType(material.graphic, source, self.restock_container, -1, -1, -1, material.hue, material.restockAmt)
+        MoveType(material.graphic, source, self.restock_container, -1, -1, -1, material.hue, material.restock_amount)
         Pause(self.item_delay)
