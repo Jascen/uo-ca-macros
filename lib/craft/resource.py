@@ -8,7 +8,7 @@ class CraftResource:
         self.hue = hue
         self.min_pack_amount = min_pack_amount
         self.restock_amount = restock_amount
-
+    
     @staticmethod
     def fromTemplate(template, resource):
         return CraftResource(template.graphic, resource.name, resource.hue, template.min_pack_amount, template.restock_amount)
@@ -42,7 +42,7 @@ class CraftIngot:
 
 
 _BoardTemplate = _CraftingResourceTemplate(0x1bd7, 50, 300)
-class CraftWood:
+class CraftBoard:
     Wood           = CraftResource.fromTemplate(_BoardTemplate, Wood)
     Ash            = CraftResource.fromTemplate(_BoardTemplate, Ash)
     Cherry         = CraftResource.fromTemplate(_BoardTemplate, Cherry)
