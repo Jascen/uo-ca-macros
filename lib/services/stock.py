@@ -1,6 +1,6 @@
 from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias
 from ClassicAssist.Data.Macros.Commands.MainCommands import Pause
-from ClassicAssist.Data.Macros.Commands.ObjectCommands import UseObject, CountType, MoveType
+from ClassicAssist.Data.Macros.Commands.ObjectCommands import UseObject, CountType, FindType, MoveType
 
 from utility.alias import AliasUtils
 from diagnostic.logger import Logger
@@ -13,7 +13,7 @@ class StockService:
         self.need_open = True
 
 
-    def Load(self, material, destination = "backpack"):
+    def Load(self, craft_resource, destination = "backpack"):
         if self.need_open:
             restock_serial = GetAlias(self.restock_container)
             if not restock_serial:
@@ -25,26 +25,29 @@ class StockService:
             Pause(self.item_delay)
             self.need_open = False # Flip bit
 
-        if material.min_pack_amount <= CountType(material.graphic, destination, material.hue):
-            Logger.Trace("Sufficient amount of {}. Skipping restock.".format(material.name))
+        if craft_resource.min_pack_amount <= CountType(craft_resource.graphic, destination, craft_resource.hue):
+            Logger.Trace("Sufficient amount of {}. Skipping restock.".format(craft_resource.name))
             return True
     
-        Logger.Debug("Checking for {} ({})".format(material.name, self.restock_container))
+        Logger.Debug("Checking for {} ({})".format(craft_resource.name, self.restock_container))
 
-        if not CountType(material.graphic, self.restock_container, material.hue):
-            Logger.Error("OUT OF {} !".format(material.name).upper())
+        if not CountType(craft_resource.graphic, self.restock_container, craft_resource.hue):
+            Logger.Error("OUT OF {} !".format(craft_resource.name).upper())
             return False
 
-        Logger.Trace("Attempting to move {}".format(material.restock_amount))
-        MoveType(material.graphic, self.restock_container, destination, -1, -1, -1, material.hue, material.restock_amount)
+        Logger.Trace("Attempting to move {}".format(craft_resource.restock_amount))
+        MoveType(craft_resource.graphic, self.restock_container, destination, -1, -1, -1, craft_resource.hue, craft_resource.restock_amount)
         Pause(self.item_delay)
 
         return True
 
 
-    def Unload(self, material, source = "backpack"):
-        Logger.Debug("Unloading {} ({})".format(material.name, self.restock_container))
+    def Unload(self, craft_resource, source = "backpack"):
+        Logger.Debug("Unloading {} ({})".format(craft_resource.name, self.restock_container))
+
+        if not FindType(craft_resource.graphic, 3, self.restock_container, craft_resource.hue): return False
 
         # Pause(self.short_pause)
-        MoveType(material.graphic, source, self.restock_container, -1, -1, -1, material.hue, material.restock_amount)
+        MoveType(craft_resource.graphic, source, self.restock_container, -1, -1, -1, craft_resource.hue, craft_resource.restock_amount)
         Pause(self.item_delay)
+        return True
