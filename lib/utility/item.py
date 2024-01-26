@@ -1,9 +1,22 @@
-from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias
+from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias, PromptMacroAlias
 from ClassicAssist.Data.Macros.Commands.MainCommands import Pause
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import FindType, IgnoreObject, MoveItem, MoveItemOffset
+from Assistant import Engine
 
 
 class ItemUtils:
+    @staticmethod
+    def PromptForType():
+        """Prompts the User to select an item and returns the Graphic ID"""
+        target_serial = PromptMacroAlias("$item_type")
+        if target_serial == None: return None
+
+        item = Engine.Items.GetItem(target_serial)
+        if item == None: return None
+
+        return item.ID
+
+
     @classmethod
     def Move(cls, graphic, hue, distance, source_serial_or_alias, destination_serial_or_alias, ignore_destination_first = False):
         """Moves the items to the destination container"""
