@@ -8,6 +8,11 @@ class CraftResource:
         self.hue = hue
         self.min_pack_amount = min_pack_amount
         self.restock_amount = restock_amount
+
+
+    def __str__(self):
+        return self.name
+
     
     @staticmethod
     def fromTemplate(template, resource):
