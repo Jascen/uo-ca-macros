@@ -72,13 +72,13 @@ class LocationUtils:
 
 
     @classmethod
-    def FindClosestIndex(cls, locations):
+    def FindClosestIndex(cls, locations, distance_fn):
         """Returns the index of the closest location"""
 
         best_distance = None
         best_index = None
         for i, location in enumerate(locations):
-            distance = cls.GetDistance(location)
+            distance = distance_fn(location)
             if best_distance == None or distance < best_distance:
                 best_index = i
                 best_distance = distance
