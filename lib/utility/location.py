@@ -3,8 +3,6 @@ from ClassicAssist.UO import UOMath
 from ClassicAssist.UO.Data import Direction, MapInfo , Statics, TileFlags
 from System import Convert
 
-from diagnostic.logger import Logger
-
 
 class Location:
     def __init__(self, x, y, z = None):
@@ -19,7 +17,6 @@ class LocationUtils:
     @classmethod
     def IncrementTowards(cls, location, direction):
         """Moves the location toward the direction by 1 tile"""
-        Logger.Debug("In LocationUtils.IncrementTowards: {}".format(str(direction)))
 
         if (direction == Direction.North):
             location.y -= 1
@@ -49,7 +46,6 @@ class LocationUtils:
     @classmethod
     def DecrementAway(cls, location, direction):
         """Moves the location opposite of the direction by 1 tile"""
-        Logger.Debug("In LocationUtils.DecrementAway")
 
         if (direction == Direction.North):
             location.y += 1
@@ -78,7 +74,6 @@ class LocationUtils:
     @classmethod
     def FindClosestIndex(cls, locations):
         """Returns the index of the closest location"""
-        Logger.Debug("In LocationUtils.FindClosestIndex")
 
         best_distance = None
         best_index = None
@@ -93,7 +88,6 @@ class LocationUtils:
     @classmethod
     def FindOppositeDirection(cls, direction):
         """Returns the inverted direction"""
-        Logger.Debug("In LocationUtils.FindOppositeDirection (of {})".format(str(direction)))
         
         if (direction == Direction.North): return Direction.South
         elif (direction == Direction.Northeast): return Direction.Southwest
@@ -109,7 +103,6 @@ class LocationUtils:
     @classmethod
     def GetDirection(cls, x, y):
         """Finds the direction of the location, relative to the Player"""
-        Logger.Debug("In LocationUtils.GetDirection")
 
         return UOMath.MapDirection(Engine.Player.X, Engine.Player.Y, x, y)
 
@@ -117,7 +110,6 @@ class LocationUtils:
     @classmethod
     def GetDistance(cls, location): # Object required for Sort method
         """Calculates the distance to the point, relative to the Player"""
-        Logger.Trace("In LocationUtils.GetDistance ({}, {})".format(location.x, location.y))
 
         return UOMath.Distance(Engine.Player.X, Engine.Player.Y, location.x, location.y)
 
@@ -125,7 +117,6 @@ class LocationUtils:
     @classmethod
     def IsAtLocation(cls, x, y):
         """Returns `True` if the Player is at the position `X, Y`"""
-        Logger.Trace("In LocationUtils.IsAtLocation ({}, {})".format(str(x), str(y)))
 
         return Engine.Player.X == x and Engine.Player.Y == y
 
@@ -133,19 +124,16 @@ class LocationUtils:
     @classmethod
     def IsEmptyTile(cls, x, y):
         """Returns `True` if the location does not contain an `Impassable` land tile or static"""
-        Logger.Debug("In LocationUtils.IsEmptyTile ({}, {})".format(str(x), str(y)))
 
         map = Convert.ChangeType(Engine.Player.Map, int)
         land_tile = MapInfo.GetLandTile(map, x, y)
         if land_tile == None: return False
         
-        Logger.Trace("Found land tile: {}".format(land_tile.Name))
         if land_tile.Flags.HasFlag(TileFlags.Impassable): return False
 
         statics = Statics.GetStatics(map, x, y)
         if statics != None:
             for s in statics:
-                Logger.Trace("Found static: {}".format(s.Name))
                 if s.Flags.HasFlag(TileFlags.Impassable): return False
         
         return True
@@ -154,7 +142,6 @@ class LocationUtils:
     @classmethod
     def TryGetEmptySpace(cls, origin):
         """Returns the first `Direction` of an empty tile around the `origin`"""
-        Logger.Debug("In LocationUtils.TryGetEmptySpace ({}, {})".format(str(origin.x), str(origin.y)))
         
         temp = Location(origin.x, origin.y)
 
@@ -183,7 +170,6 @@ class LocationUtils:
     @classmethod
     def RotateClockwise(self, direction):
         """Returns the next clockwise `Direction`"""
-        Logger.Debug("In LocationUtils.RotateClockwise (of {})".format(str(direction)))
 
         if (direction == Direction.North): return Direction.Northeast
         if (direction == Direction.Northeast): return Direction.East
