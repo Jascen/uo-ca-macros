@@ -11,10 +11,10 @@ reload(entities.craftmenuitem)
 
 # Repository Structure
 ## Lib Folder
-- Each [entity](/lib/entities/) provides many instances of different models
-- Each [model](/lib/models/) is a way to programatically define a logical grouping of properties
-- Each [service](/lib/services/) utilizes other files in the repository to perform specialized tasks
-- Each [utility](/lib/utility/) providers helper functions to simplify common tasks
+- [Entities](/lib/entities/) use [models](/lib/models/) to expose constants within the game
+- [Models](/lib/models/) are the basic building blocks that programmatically describe something of interest
+- [Services](/lib/services/) perform specialized tasks and typically utilize many of the other files in this repository
+- [Utilities](/lib/utility/) providers helper functions to simplify common tasks
   - *Note*: Each utility file uses primitive types to allow them to be used without depending on this repository
 
 
