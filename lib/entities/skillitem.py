@@ -1,5 +1,5 @@
 from models.skillitem import SkillItem
-from entities.craftresourceitem import CraftResourceItem, BoardResource
+from entities.craftresourceitem import CraftResourceItem
 from entities.generalitem import Log, Board
 from entities.resourcetype import WoodResourceType
 
