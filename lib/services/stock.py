@@ -7,10 +7,11 @@ from diagnostic.logger import Logger
 
 
 class StockService:
+    """Moves a `CraftResourceItem` between the `restock_container` and the `destination` or `source`"""
     def __init__(self, restock_container):
         self.restock_container = AliasUtils.EnsureContainer(restock_container)
         self.item_delay = 1500
-        self.need_open = True
+        self.need_open = True # Warning: Only perform once per instance lifetimes
 
 
     def Load(self, craft_resource, destination = "backpack"):

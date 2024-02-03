@@ -10,6 +10,7 @@ from utility.location import LocationUtils
 
 
 class Scavenger:
+    """Detects items on the ground, runs to them if they're out of range, and then moves them to the `destination_container`"""
     def __init__(self, destination_container):
         self.destination_container = AliasUtils.EnsureContainer(destination_container)
 
