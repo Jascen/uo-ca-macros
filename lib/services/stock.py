@@ -1,3 +1,4 @@
+from Assistant import Engine
 from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias
 from ClassicAssist.Data.Macros.Commands.MainCommands import Pause
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import UseObject, CountType, FindType, MoveType
@@ -14,18 +15,16 @@ class StockService:
         self.need_open = True # Warning: Only perform once per instance lifetimes
 
 
+    def FindItem(self, name):
+        if not self.__TryOpenRestock(): return None
+
+        restock_container = Engine.Items.GetItem(GetAlias(self.restock_container))
+
+        return self.__FindItemByName(name, restock_container.Container)
+
+
     def Load(self, craft_resource_item_or_array, destination = "backpack"):
-        if self.need_open:
-            restock_serial = GetAlias(self.restock_container)
-            if not restock_serial:
-                Logger.Error("Failed to find restock container ({})".format(self.restock_container))
-                return False
-
-            Pause(self.item_delay) # This happens infrequently. Delay to guarantee it can be opened.
-            UseObject(restock_serial)
-            Pause(self.item_delay)
-            self.need_open = False # Flip bit
-
+        if not self.__TryOpenRestock(): return False
         if not isinstance(craft_resource_item_or_array, list): craft_resource_item_or_array = [craft_resource_item_or_array] # Convert a single entity into an array
 
         for craft_resource in craft_resource_item_or_array:
@@ -57,4 +56,29 @@ class StockService:
             # Pause(self.short_pause)
             MoveType(craft_resource.graphic, source, self.restock_container, -1, -1, -1, craft_resource.hue, craft_resource.restock_amount)
             Pause(self.item_delay)
+        return True
+
+
+    def __FindItemByName(self, name, container):
+        all_items = container.GetItems()
+        name_normalized = name.ToLower()
+        for item in all_items:
+            if item.Name.ToLower().strip().Contains(name_normalized): return item
+        
+        return None
+
+    
+    def __TryOpenRestock(self):
+        if not self.need_open: return True # Assume it's open already
+
+        restock_serial = GetAlias(self.restock_container)
+        if not restock_serial:
+            Logger.Error("Failed to find restock container ({})".format(self.restock_container))
+            return False
+
+        Pause(self.item_delay) # This happens infrequently. Delay to guarantee it can be opened.
+        UseObject(restock_serial)
+        Pause(self.item_delay)
+        self.need_open = False # Flip bit
+
         return True
