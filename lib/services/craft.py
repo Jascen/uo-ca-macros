@@ -1,11 +1,12 @@
-from ClassicAssist.Data.Macros.Commands.MainCommands import Pause, SysMessage
-from ClassicAssist.Data.Macros.Commands.GumpCommands import ReplyGump, WaitForGump, GumpExists
 from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias
+from ClassicAssist.Data.Macros.Commands.GumpCommands import ReplyGump, WaitForGump, GumpExists
+from ClassicAssist.Data.Macros.Commands.MainCommands import Pause, SysMessage
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import FindType, CountType, UseType
 from ClassicAssist.Data.Macros.Commands.SkillCommands import Skill, SkillCap
 
-from entities.craftresourceitem import IngotResource
 from entities.craftmenuitem import MortarAndPestle, Tongs, Hammer, FletchingTool, SewingKit, TinkerTool, ScribesPen, MapmakersPen, Skillet
+from entities.craftresourceitem import IngotResource
+from models.craftresourceitem import CraftResourceItem
 from services.stock import StockService
 from diagnostic.logger import Logger
 
@@ -51,6 +52,15 @@ class CraftServiceFactory:
 class CraftService:
     def __init__(self, craft_service_base):
         self.service = craft_service_base
+
+
+    def GetResource(self, name, min_pack_amount, restock_amount):
+        item = self.service.stock_service.FindItem(name)
+        if not item:
+            Logger.Error("Failed to create resource for item '{}'.".format(name))
+            raise Exception()
+        
+        return CraftResourceItem(item.ID, item.Name, item.Hue, min_pack_amount, restock_amount)
 
 
     def CraftItem(self, item, resources):
