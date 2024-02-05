@@ -12,7 +12,7 @@ def Main():
     
     all_items = []
 
-    # Explosion Potions
+    # Poison Potions
     if True:
         resources = [
             service.GetResource("empty bottle", 10, 50), 
