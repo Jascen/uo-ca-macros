@@ -118,7 +118,7 @@ class CraftServiceBase:
         while 0 < skill_cap - skill_value:
             skill_value = Skill(self.skill_name)
             if skill_value < skill_item.max_level:
-                Logger.Trace("Crating item ({})".format(skill_item.item.name))
+                Logger.Trace("Crafting item ({})".format(skill_item.item.name))
                 if self.CraftItem(skill_item.item, skill_item.resources): 
                     if after_created_fn:
                         if not self.EnsureTool():
