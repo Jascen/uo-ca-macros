@@ -1,4 +1,5 @@
 from entities.craftmenuitem import *
+from entities.craftresourceitem import BoardResource, IngotResource
 from models.skillitem import SkillItem
 from services.craft import CraftServiceFactory, CraftingSkill
 from utility.alias import AliasUtils
@@ -9,14 +10,12 @@ def Main():
     AliasUtils.PromptContainer(resource_container)
     service = CraftServiceFactory.Create(CraftingSkill.Alchemy, resource_container)
     
-    empty_bottle = service.GetResource("empty bottle", 10, 50)
-    
     all_items = []
 
-    # Using Nightshade
+    # Explosion Potions
     if True:
         resources = [
-            empty_bottle, 
+            service.GetResource("empty bottle", 10, 50), 
             service.GetResource("nightshade", 50, 300)
         ]
         all_items += [
@@ -27,16 +26,32 @@ def Main():
             SkillItem(LethalPoisonPotion, resources, 100, 125),
         ]
 
-    # Using Sulfurous Ash
+    # Explosion Potions
     if True:
         resources = [
-            empty_bottle, 
+            service.GetResource("empty bottle", 10, 50), 
             service.GetResource("sulfurous ash", 50, 300)
         ]
         all_items += [
             SkillItem(LesserExplosionPotion, resources, 5, 50), # 55
             SkillItem(ExplosionPotion, resources, 50, 80), # 85
             SkillItem(GreaterExplosionPotion, resources, 80, 110), # 115
+        ]
+
+    # Ingot Transmutes
+    if False:
+        all_items += [
+            SkillItem(TransmuteDullCopper, [IngotResource.Iron], 40, 60),
+            SkillItem(TransmuteShadowIron, [IngotResource.DullCopper], 50, 70),
+            SkillItem(TransmuteCopper, [IngotResource.ShadowIron], 60, 80),
+            SkillItem(TransmuteBronze, [IngotResource.Copper], 70, 90),
+        ]
+
+    # Wood Transmutes
+    if False:
+        all_items += [
+            SkillItem(TransmuteMohagony, [BoardResource.Hickory], 80, 95),
+            SkillItem(TransmuteDriftwood, [BoardResource.Mohagony], 95, 110),
         ]
 
     service.Level(all_items)
