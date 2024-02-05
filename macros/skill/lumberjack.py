@@ -1,3 +1,10 @@
+"""
+Name: Lumberjack skill trainer
+Description: Cuts the configured log types one at a time until you no longer get gains
+Author: Tsai (Ultima Adventures)
+Version: v1.0
+"""
+
 from utility.alias import AliasUtils
 from services.logcutter import LogCutter
 from entities.skillitem import LumberjackSkillItem

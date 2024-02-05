@@ -1,3 +1,10 @@
+"""
+Name: Log Cutter
+Description: Cuts the configured log types in the amount specified
+Author: Tsai (Ultima Adventures)
+Version: v1.0
+"""
+
 from utility.alias import AliasUtils
 from services.logcutter import LogCutter
 from entities.skillitem import LumberjackSkillItem
