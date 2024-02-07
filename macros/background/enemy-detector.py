@@ -2,7 +2,7 @@
 Name: Automatic Enemy Detector
 Description: Notifies the User of any enemies (based on Notoriety) within the designated range
 Author: Tsai (Ultima Adventures)
-Version: v1.0
+Version: v1.1
 """
 
 import System
@@ -55,11 +55,11 @@ regions_to_suppress = [ # A list of places to avoid running the script. Can be e
 
 class Enemies:
     def __init__(self, notorieties):
-        IgnoreObject("self")
         self.notorieties = notorieties
         self.refresh()
 
     def refresh(self, search_distance=1):
+        IgnoreObject("self")
         self._mobiles = self._find_enemies(search_distance)
 
     def are_amount_eq(self, number):
@@ -107,7 +107,7 @@ def Main():
         if target and (last_target == None or target != last_target):
             if show_enemy_headmsg:
                 for i, color in enumerate(UserOptions.Enemy_headmsg_colors):
-                    HeadMsg(enemy_headmsg, target, color)
+                    HeadMsg(UserOptions.Enemy_headmsg, target, color)
 
             if play_enemy_alert_sounds:
                 for i, sound in enumerate(UserOptions.Enemy_alert_sounds):
