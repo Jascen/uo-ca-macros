@@ -3,7 +3,7 @@ Name: Automagic miner
 Description: Attempts to completely mine every spot around you.
     Overweight behavior is configurable.
 Author: Tsai (Ultima Adventures)
-Version: v1.1
+Version: v1.2
 """
 
 
@@ -123,8 +123,8 @@ def SmeltOre():
         item = Engine.Items.GetItem(GetAlias("found"))
         if item == None: continue
 
-        # Never Smelt Dwarven, Obsidian, Xormite, Zinc, or Coal
-        if item.Hue == 1788 or item.Hue == 1986 or item.Hue == 1991 or item.Hue == 2500 or item.Hue == 1175:
+        # Never Smelt Dwarven, Obsidian, Xormite, Zinc, Coal, or Mithril
+        if item.Hue == 1788 or item.Hue == 1986 or item.Hue == 1991 or item.Hue == 2500 or item.Hue == 1175 or item.Hue == 2928:
             IgnoreObject("found")
             continue
 
