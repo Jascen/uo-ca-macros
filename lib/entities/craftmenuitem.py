@@ -13,6 +13,7 @@ PoisonPotion           = CraftMenuItem(0xf0a, 1, 135, "poison potion")
 GreaterPoisonPotion    = CraftMenuItem(0x2601, 1, 142, "greater poison potion")
 DeadlyPoisonPotion     = CraftMenuItem(0x2669, 1, 149, "deadly poison potion")
 LethalPoisonPotion     = CraftMenuItem(0x266a, 1, 156, "lethal poison potion")
+GreaterStrengthPotion  = CraftMenuItem(0x25f7, 1, 191, "greater strength potion")
 ## ***** Transmutations *****
 TransmuteDullCopper    = CraftMenuItem(0x1bd7, 22, 2, "dull copper ingot")
 TransmuteShadowIron    = CraftMenuItem(0x1bd7, 22, 9, "shadow iron ingot")
