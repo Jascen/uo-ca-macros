@@ -6,10 +6,10 @@ from models.craftmenuitem import CraftMenuItem
 # *************************
 ## ***** Potions *****
 LesserExplosionPotion  = CraftMenuItem(0x2407, 1, 65, "lesser explosion potion")
-ExplosionPotion        = CraftMenuItem(0xf0d, 1, 72, "explosion potion")
+ExplosionPotion        = CraftMenuItem(0xf0d,  1, 72, "explosion potion")
 GreaterExplosionPotion = CraftMenuItem(0x2408, 1, 79, "greater explosion potion")
 LesserPoisonPotion     = CraftMenuItem(0x2600, 1, 128, "lesser poison potion")
-PoisonPotion           = CraftMenuItem(0xf0a, 1, 135, "poison potion")
+PoisonPotion           = CraftMenuItem(0xf0a,  1, 135, "poison potion")
 GreaterPoisonPotion    = CraftMenuItem(0x2601, 1, 142, "greater poison potion")
 DeadlyPoisonPotion     = CraftMenuItem(0x2669, 1, 149, "deadly poison potion")
 LethalPoisonPotion     = CraftMenuItem(0x266a, 1, 156, "lethal poison potion")
@@ -35,7 +35,7 @@ RingmailLeggings       = CraftMenuItem(0x13f0, 1, 30, "ringmail leggings")
 RingmailSleeves        = CraftMenuItem(0x13ee, 1, 37, "ringmail sleeves")
 RingmailTunic          = CraftMenuItem(0x13ec, 1, 44, "ringmail tunic")
 ## ***** Platemail *****
-PlatemailArms          = CraftMenuItem(0x304, 8, 2, "platemail arms") # TODO: Verify
+PlatemailArms          = CraftMenuItem(0x304,  8, 2, "platemail arms") # TODO: Verify
 PlatemailGloves        = CraftMenuItem(0x1414, 8, 9, "platemail gloves") # TODO: Verify
 PlatemailGorget        = CraftMenuItem(0x1413, 8, 16, "platemail gorget") # TODO: Verify
 PlatemailLeggings      = CraftMenuItem(0x1411, 8, 23, "platemail legs") # TODO: Verify
@@ -61,24 +61,24 @@ ChaosShield            = CraftMenuItem(0x1bc3, 36, 93, "chaos shield") # TODO: V
 OrderShield            = CraftMenuItem(0x1bc4, 36, 100, "order shield") # TODO: Verify
 ## ***** Bladed *****
 BarbarianSword         = CraftMenuItem(0x13b9, 43, 16, "viking sword")
-Broadsword             = CraftMenuItem(0xf5e, 43, 23, "broadsword")
+Broadsword             = CraftMenuItem(0xf5e,  43, 23, "broadsword")
 CrescentBlade          = CraftMenuItem(0x26c1, 43, 30, "crescent blade") # TODO: Verify
 Cutlass                = CraftMenuItem(0x1441, 43, 37, "cutlass")
-Dagger                 = CraftMenuItem(0xf52, 43, 44, "dagger")
+Dagger                 = CraftMenuItem(0xf52,  43, 44, "dagger")
 Katana                 = CraftMenuItem(0x13ff, 43, 58, "katana")
 Kryss                  = CraftMenuItem(0x1401, 43, 65, "kryss")
-Longsword              = CraftMenuItem(0xf61, 43, 72, "longsword")
+Longsword              = CraftMenuItem(0xf61,  43, 72, "longsword")
 Scimitar               = CraftMenuItem(0x13b6, 43, 100, "scimitar")
 ## ***** Axes *****
-Axe                    = CraftMenuItem(0xf49, 50, 16, "axe")
-BattleAxe              = CraftMenuItem(0xf47, 50, 23, "battle axe")
-DoubleAxe              = CraftMenuItem(0xf4b, 50, 30, "double axe")
-ExecutionerAxe         = CraftMenuItem(0xf45, 50, 37, "executioner's axe")
+Axe                    = CraftMenuItem(0xf49,  50, 16, "axe")
+BattleAxe              = CraftMenuItem(0xf47,  50, 23, "battle axe")
+DoubleAxe              = CraftMenuItem(0xf4b,  50, 30, "double axe")
+ExecutionerAxe         = CraftMenuItem(0xf45,  50, 37, "executioner's axe")
 LargeBattleAxe         = CraftMenuItem(0x13fb, 50, 44, "large battle axe")
 TwoHandedAxe           = CraftMenuItem(0x1443, 50, 51, "two handed axe")
 WarAxe                 = CraftMenuItem(0x13b0, 50, 58, "war axe")
 ## ***** Polearms *****
-Bardiche               = CraftMenuItem(0xf4d, 57, 2, "bardiche")
+Bardiche               = CraftMenuItem(0xf4d,  57, 2, "bardiche")
 BladedStaff            = CraftMenuItem(0x26bd, 57, 9, "bladed staff") # TODO: Verify
 DoubleBladedStaff      = CraftMenuItem(0x26bf, 57, 16, "double bladed staff") # TODO: Verify
 Halberd                = CraftMenuItem(0x143e, 57, 23, "halberd")
@@ -90,7 +90,7 @@ Spear                  = CraftMenuItem(0xf62, 57, 65, "spear")
 Warfork                = CraftMenuItem(0x1405, 57, 72, "war fork")
 ## ***** Bashing *****
 HammerPick             = CraftMenuItem(0x143d, 64, 9, "hammer pick")
-Mace                   = CraftMenuItem(0xf5c, 64, 16, "mace")
+Mace                   = CraftMenuItem(0xf5c,  64, 16, "mace")
 Maul                   = CraftMenuItem(0x143b, 64, 23, "maul")
 Scepter                = CraftMenuItem(0x26bc, 64, 30, "scepter") # TODO: Verify ???
 WarMace                = CraftMenuItem(0x1407, 64, 37, "war mace")
@@ -105,7 +105,7 @@ BarkFragment           = CraftMenuItem(0x318f, 1, 9, "bark fragment")
 BarrelStaves           = CraftMenuItem(0x1eb1, 1, 23, "barrel staves")
 BarrelLid              = CraftMenuItem(0x1db8, 1, 30, "barrel lid")
 ## ***** Furniture *****
-WoodenChair            = CraftMenuItem(0xb57, 8, 23, "chair")
+WoodenChair            = CraftMenuItem(0xb57,  8, 23, "chair")
 ## ***** Weapons and Armor *****
 Fukiya                 = CraftMenuItem(0x27aa, 29, 44, "fukiya")
 Bokuto                 = CraftMenuItem(0x27a8, 29, 37, "bokuto")
@@ -119,7 +119,7 @@ Tetsubo                = CraftMenuItem(0x27a6, 29, 51, "tetsubo")
 Shaft                  = CraftMenuItem(0x1bd4, 1, 9, "shaft")
 ## ***** Weapons *****
 Bow                    = CraftMenuItem(0x13b2, 15, 2, "bow")
-Crossbow               = CraftMenuItem(0xf50, 15, 9, "crossbow")
+Crossbow               = CraftMenuItem(0xf50,  15, 9, "crossbow")
 HeavyCrossbow          = CraftMenuItem(0x13fd, 15, 16, "heavy crossbow")
 CompositeBow           = CraftMenuItem(0x26c2, 15, 23, "composite bow")
 RepeatingBow           = CraftMenuItem(0x26c3, 15, 30, "repeating crossbow")
@@ -203,16 +203,16 @@ BoneArmor              = CraftMenuItem(0x144f, 57, 37, "bone armor")
 # Tinker
 # *************************
 ## ***** Tools ******
-Scissors               = CraftMenuItem(0xf9f, 8, 2, "scissors")
+Scissors               = CraftMenuItem(0xf9f,  8, 2, "scissors")
 MortarAndPestle        = CraftMenuItem(0x4ce9, 8, 9, "mortar and pestle")
 TinkerTool             = CraftMenuItem(0x1eb8, 8, 23, "tinker tool")
-Hatchet                = CraftMenuItem(0xf43, 8, 30, "hatchet")
+Hatchet                = CraftMenuItem(0xf43,  8, 30, "hatchet")
 SewingKit              = CraftMenuItem(0x4c81, 8, 44, "sewing kit", -1)
-Shovel                 = CraftMenuItem(0xf39, 8, 86, "shovel")
+Shovel                 = CraftMenuItem(0xf39,  8, 86, "shovel")
 Hammer                 = CraftMenuItem(0x102a, 8, 107, "hammer")
-Tongs                  = CraftMenuItem(0xfbb, 8, 114, "tongs")
+Tongs                  = CraftMenuItem(0xfbb,  8, 114, "tongs")
 Lockpick               = CraftMenuItem(0x14fc, 8, 149, "lockpick")
-Skillet                = CraftMenuItem(0x97f, 8, 156, "skillet")
+Skillet                = CraftMenuItem(0x97f,  8, 156, "skillet")
 FletchingTool          = CraftMenuItem(0x1f2c, 8, 170, "fletching tools")
 MapmakersPen           = CraftMenuItem(0x2052, 8, 177, "mapmaker's pen", -1)
 ScribesPen             = CraftMenuItem(0x2051, 8, 184, "scribe's pen", -1)
