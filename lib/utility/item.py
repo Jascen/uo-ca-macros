@@ -5,6 +5,16 @@ from Assistant import Engine
 
 
 class ItemUtils:
+    @classmethod
+    def GetAll(cls, graphic, hue, distance, source_serial_or_alias):
+        items = []
+        while FindType(graphic, distance, source_serial_or_alias, hue):
+            items.append(GetAlias("found"))
+            IgnoreObject("found")
+        
+        return items
+
+
     @staticmethod
     def PromptForType():
         """Prompts the User to select an item and returns the Graphic ID"""
@@ -34,10 +44,7 @@ class ItemUtils:
 
     @classmethod
     def __Move(cls, graphic, hue, distance, source_serial_or_alias, move_fn):
-        items = []
-        while FindType(graphic, distance, source_serial_or_alias, hue):
-            items.append(GetAlias("found"))
-            IgnoreObject("found")
+        items = cls.GetAll(graphic, hue, distance, source_serial_or_alias)
                 
         for item in items:
             move_fn(item)
