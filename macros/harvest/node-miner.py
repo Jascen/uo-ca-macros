@@ -123,8 +123,15 @@ def SmeltOre():
         item = Engine.Items.GetItem(GetAlias("found"))
         if item == None: continue
 
-        # Never Smelt Dwarven, Obsidian, Xormite, Zinc, Coal, or Mithril
-        if item.Hue == 1788 or item.Hue == 1986 or item.Hue == 1991 or item.Hue == 2500 or item.Hue == 1175 or item.Hue == 2928:
+        # Never Smelt:
+        if (
+            item.Hue == 1788 # Dwarven
+            or item.Hue == 1986 # Obsidian
+            or item.Hue == 1991 # Xormite
+            or item.Hue == 2500 # Zinc
+            or item.Hue == 1175 # Coal
+            or item.Hue == 2928 # Mithril
+            ):
             IgnoreObject("found")
             continue
 
