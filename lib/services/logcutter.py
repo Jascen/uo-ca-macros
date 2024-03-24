@@ -44,6 +44,6 @@ class LogCutter:
             Target(self.sawmill)
 
 
-    def __CanStillGain(wood):
+    def __CanStillGain(self, wood):
         current_skill = round(Skill("Lumberjackin"), 1)
         return wood.min_level < current_skill and current_skill < wood.max_level
