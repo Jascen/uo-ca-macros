@@ -2,7 +2,7 @@
 Name: BOD Assistant
 Description: Used to automate monotonous parts of completing Bulk Order Deeds
 Author: Tsai (Ultima Adventures)
-Version: v0.1
+Version: v0.2
 """
 
 from Assistant import Engine
@@ -382,6 +382,10 @@ def Main():
                 resources_by_key[primary_resource]
             ]
 
+            if not stock_service.Load(resources):
+                Pause(1000)
+                continue
+
             last_item_to_craft = None
             graphic_to_target = None
             while not Dead():
@@ -390,6 +394,7 @@ def Main():
 
                 if item_to_craft != last_item_to_craft:
                     CancelTarget() # Clear the cursor
+                    stock_service.Load(resources) # Try to pre-emptively load to assist in crafting
                     graphic_to_target = ResolveItemNameAsGraphic(item_to_craft)
                     HeadMsg("Targeting ({}) for '{}'.".format(hex(graphic_to_target), item_to_craft), "self", 31)
                     last_item_to_craft = item_to_craft
@@ -399,7 +404,7 @@ def Main():
                     UseObject(item.Serial)
                     Pause(1000)
 
-                    if not WaitForGump(service.bod_gump_id, 5000):
+                    if not GumpExists(service.bod_gump_id) and not WaitForGump(service.bod_gump_id, 5000):
                         Logger.Error("Failed to detect BOD gump.")
                         continue
 
@@ -441,6 +446,7 @@ def Main():
 
                     if not stock_service.Load(resources):
                         Logger.Error("Failed to restock resources")
+                        Pause(1000) # Throttle to reduce spamming
                         continue # Comment this out if you want to use the remaining resources in your backpack
 
                     if not service.CraftItem(item_to_craft):
@@ -491,4 +497,6 @@ class BODMagic:
 
 
 # Execute Main()
+#Logger.DEBUG = True
+#Logger.TRACE = True
 Main()
