@@ -3,6 +3,7 @@ from ClassicAssist.Data.Macros.Commands.AliasCommands import GetAlias
 from ClassicAssist.Data.Macros.Commands.MainCommands import Pause
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import UseObject, CountType, FindType, MoveType
 
+from models.craftresourceitem import CraftResourceItem
 from utility.alias import AliasUtils
 from diagnostic.logger import Logger
 
@@ -21,6 +22,15 @@ class StockService:
         restock_container = Engine.Items.GetItem(GetAlias(self.restock_container))
 
         return self.__FindItemByName(name, restock_container.Container)
+
+
+    def GetResource(self, name, min_pack_amount, restock_amount):
+        item = self.FindItem(name)
+        if not item:
+            Logger.Error("Failed to create resource for item '{}'.".format(name))
+            raise Exception()
+        
+        return CraftResourceItem(item.ID, item.Name, item.Hue, min_pack_amount, restock_amount)
 
 
     def Load(self, craft_resource_item_or_array, destination = "backpack"):
