@@ -8,9 +8,10 @@ from models.craftresourceitem import CraftResourceItem
 from Assistant import Engine
 from ClassicAssist.Data.Macros.Commands.TargetCommands import CancelTarget
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import FindType
+from utility.item import ItemUtils
 
 
-class BodAssistant:
+class BodAssistant:    
     def Run(self):
         config = BodAssistantConfig()
         alias = "restock_container"
@@ -23,103 +24,142 @@ class BodAssistant:
             resources_by_key[resource.name] = resource
 
         ClearIgnoreList()
-        while FindType(config.bod_type_id, -1, "backpack"):     
-            item = Engine.Items.GetItem(GetAlias("found"))
-            bod = BODFactory.Create(item)
-            if bod == None: continue # Failed to create
+        bod_item_serials = ItemUtils.GetAll(config.bod_type_id, -1, -1, "backpack")
+        bod_serials_by_resource_by_item = self.__GroupBodsByResourceByItems(bod_item_serials) # { [resource]: { [item]: serial[] } }
+        
+        ClearIgnoreList()
+        for serial in bod_item_serials:
+            source_bod = self.__TryCreateBod(serial)
+            if source_bod == None: continue
+            if source_bod.IsComplete(): continue
 
-            while not bod.IsComplete():
-                Logger.Error("I have so much work to do for this BOD...")
-                print(bod)
+            Logger.Error("I have so much work to do for this BOD...")
+            print(source_bod)
+            
+            # Resolve Resources
+            primary_resource = source_bod.require_resource
+            if not resources_by_key.get(primary_resource):
+                resources_by_key[primary_resource] = self.__ResolveResource(primary_resource)
 
-                # Resolve Resources
-                primary_resource = bod.require_resource if bod.require_resource else "Default"
-                if not resources_by_key.get(primary_resource):
-                    resources_by_key[primary_resource] = self.__ResolveResource(primary_resource)
+            resources = [
+                resources_by_key[primary_resource]
+            ]
+        
+            while not source_bod.IsComplete():
+                for item_name in source_bod.items_counts_by_name.keys():
+                    # Ensure the item needs to be crafted before we prompt the User
+                    if source_bod.GetRemainingAmount(item_name) <= 0: continue
+                    
+                    CancelTarget() # Clear the cursor
+                    stock_service.Load(resources) # Try to pre-emptively load to assist in crafting
 
-                resources = [
-                    resources_by_key[primary_resource]
-                ]
+                    suggested_graphic = None
+                    if config.graphic_id_map.get(item_name): suggested_graphic = config.graphic_id_map[item_name]
+                    
+                    first_resource = resources[0] # Assume this is the most important one to show the User
+                    graphic_to_target = self.__ResolveItemNameAsGraphic(first_resource, item_name, suggested_graphic)
+                    HeadMsg("Targeting ({}) for '{}'.".format(hex(graphic_to_target), item_name), "self", 31)
 
-                if not stock_service.Load(resources):
-                    Pause(1000)
+                    for bod_serial in bod_serials_by_resource_by_item[first_resource.name][item_name]:
+                        bod_to_fill = Engine.Items.GetItem(bod_serial)
+
+                        while not Dead():
+                            if not stock_service.Load(resources):
+                                Pause(1000)
+                                continue
+
+                            if self.__TryCraftAndFillItem(item_name, graphic_to_target, bod_to_fill, resources, stock_service, config): break
+                            
+                            Pause(1000) # Prevent CPU spinning
+            
+                # TODO: Optimize this. The item is refreshed but we're brute-force rebuilding the BOD to "refresh" it
+                source_item = Engine.Items.GetItem(serial)
+                source_bod = BODFactory.Create(source_item) # Get the very latest
+
+            Logger.Log("Finished processing BOD.")
+            config.AfterBODCompleted(Engine.Items.GetItem(serial))
+            # stock_service.Unload(resources) # TODO: Potentially unload resources
+
+
+    def __TryCreateBod(self, serial):
+        source_item = Engine.Items.GetItem(serial)
+        if source_item == None: return None # No longer exists
+
+        source_bod = BODFactory.Create(source_item) # Refresh to latest state
+        if source_bod == None: return None # Failed to create
+
+        return source_bod
+
+            
+    def __TryCraftAndFillItem(self, item_to_craft, graphic_to_target, bod_item, resources, stock_service, config):
+            bod = BODFactory.Create(bod_item)
+            if bod == None: return False # Failed to create
+
+            while 0 < bod.GetRemainingAmount(item_to_craft):
+                if not config.VerifyOverweight():
+                    InteractionUtils.Prompt(
+                        "<center>Weight failure</center>",
+                        "The weight check has failed.",
+                        "Press any button to continue."
+                    )
                     continue
 
-                last_item_to_craft = None
-                graphic_to_target = None
-                while not Dead():
-                    item_to_craft = bod.GetIncompleteItem()
-                    if not item_to_craft: break # No work to do
+                # Open BOD Gump if necessary
+                if not GumpExists(config.bod_gump_id):
+                    UseObject(bod_item.Serial)
+                    Pause(1000)
 
-                    if item_to_craft != last_item_to_craft:
-                        CancelTarget() # Clear the cursor
-                        stock_service.Load(resources) # Try to pre-emptively load to assist in crafting
+                    if not GumpExists(config.bod_gump_id) and not WaitForGump(config.bod_gump_id, 5000):
+                        Logger.Error("Failed to detect BOD gump.")
+                        continue
 
-                        suggested_graphic = None
-                        if config.graphic_id_map.get(item_to_craft): suggested_graphic = config.graphic_id_map[item_to_craft]
-                        graphic_to_target = self.__ResolveItemNameAsGraphic(primary_resource, item_to_craft, suggested_graphic)
-                        HeadMsg("Targeting ({}) for '{}'.".format(hex(graphic_to_target), item_to_craft), "self", 31)
-                        last_item_to_craft = item_to_craft
-
-                    # Open BOD Gump if necessary
-                    if not GumpExists(config.bod_gump_id):
-                        UseObject(item.Serial)
-                        Pause(1000)
-
-                        if not GumpExists(config.bod_gump_id) and not WaitForGump(config.bod_gump_id, 5000):
-                            Logger.Error("Failed to detect BOD gump.")
-                            continue
-
-                    CancelTarget()
+                CancelTarget()
+                if not TargetExists():
+                    ReplyGump(config.bod_gump_id, 2) # Press Combine
+                    WaitForTarget(1000)
                     if not TargetExists():
-                        ReplyGump(config.bod_gump_id, 2) # Press Combine
-                        WaitForTarget(1000)
-                        if not TargetExists():
-                            Logger.Error("Failed to select Combine.")
-                            continue
+                        Logger.Error("Failed to select Combine.")
+                        continue
 
-                    ClearIgnoreList()
-                    while FindType(graphic_to_target, -1, "backpack"):
-                        candidate = Engine.Items.GetItem(GetAlias("found"))
-                        if not config.AfterItemCrafted(candidate, bod, resources[0]): 
-                            IgnoreObject(candidate.Serial)
-                            continue
-
-                        # TODO: Can we do something about guaranteeing it's selected?
+                ClearIgnoreList()
+                while FindType(graphic_to_target, -1, "backpack"):
+                    candidate = Engine.Items.GetItem(GetAlias("found"))
+                    if not config.AfterItemCrafted(candidate, bod, resources[0]): 
                         IgnoreObject(candidate.Serial)
-                        Target(candidate.Serial)
-                        if not WaitForTarget(3000): break
+                        continue
 
-                        Pause(250)
+                    # TODO: Can we do something about guaranteeing it's selected?
+                    IgnoreObject(candidate.Serial)
+                    Target(candidate.Serial)
+                    if not WaitForTarget(3000): break
 
-                    # Close
-                    CancelTarget()
-                    if GumpExists(config.bod_gump_id):
-                        ReplyGump(config.bod_gump_id, 0) # Close
+                    Pause(250)
 
-                    # TODO: Optimize this. The item is refreshed but we're brute-force rebuilding the BOD to "refresh" it
-                    bod = BODFactory.Create(item) # Get the very latest
+                # Close
+                CancelTarget()
+                if GumpExists(config.bod_gump_id):
+                    ReplyGump(config.bod_gump_id, 0) # Close
 
-                    for i in range(min(5, bod.GetRemainingAmount(item_to_craft))): # Never exceed more than 5 at a time due to weight constraints
-                        # Scan backpack and auto-select
-                        while War("self"):
-                            Logger.Log("War mode detected. Pausing execution...")
-                            Pause(2500)
+                # TODO: Optimize this. The item is refreshed but we're brute-force rebuilding the BOD to "refresh" it
+                bod = BODFactory.Create(bod_item) # Get the very latest
 
-                        if not stock_service.Load(resources):
-                            Logger.Error("Failed to restock resources")
-                            Pause(1000) # Throttle to reduce spamming
-                            continue # Comment this out if you want to use the remaining resources in your backpack
+                for i in range(min(5, bod.GetRemainingAmount(item_to_craft))): # Never exceed more than 5 at a time due to weight constraints
+                    # Scan backpack and auto-select
+                    while War("self"):
+                        Logger.Log("War mode detected. Pausing execution...")
+                        Pause(2500)
 
-                        if not config.CraftItem(item_to_craft):
-                            Logger.Error("Failed to craft item. Enabling war mode")
-                            WarMode("on")
-                            continue
+                    if not stock_service.Load(resources):
+                        Logger.Error("Failed to restock resources")
+                        Pause(1000) # Throttle to reduce spamming
+                        continue # Comment this out if you want to use the remaining resources in your backpack
+
+                    if not config.CraftItem(item_to_craft):
+                        Logger.Error("Failed to craft item. Enabling war mode")
+                        WarMode("on")
+                        continue
             
-            Logger.Log("Finished processing BOD.")
-            config.AfterBODCompleted(item)
-            IgnoreObject(item.Serial)
-            Pause(1000) # Prevent CPU spinning
+            return True
 
 
     def __FindItemByName(self, name, container):
@@ -128,6 +168,28 @@ class BodAssistant:
             if name in item.Name.lower(): return item
 
         return None
+
+
+    def __GroupBodsByResourceByItems(self, bod_serials):
+        bod_serials_by_resource_by_item = {} # { [resource]: { [item]: serial[] } }
+
+        for serial in bod_serials:
+            item = Engine.Items.GetItem(serial)
+            bod = BODFactory.Create(item)
+            if bod == None: continue # Failed to create
+
+            primary_resource = bod.require_resource if bod.require_resource else "Default"
+            if not bod_serials_by_resource_by_item.get(primary_resource):
+                bod_serials_by_resource_by_item[primary_resource] = {}
+
+
+            for item_name in bod.items_counts_by_name.keys(): # items()
+                if not bod_serials_by_resource_by_item[primary_resource].get(item_name):
+                    bod_serials_by_resource_by_item[primary_resource][item_name] = []
+
+                bod_serials_by_resource_by_item[primary_resource][item_name].append(serial)
+        
+        return bod_serials_by_resource_by_item
 
 
     def __ResolveItemNameAsGraphic(self, resource_name, item_name, suggested_graphic = None):
@@ -194,7 +256,6 @@ class BodAssistant:
 
 
     def __ResolveResource(self, resource_key):
-        resource_key = resource_key.upper()
         CancelTarget() # Clear the cursor
         InteractionUtils.Prompt(
             "<center>The Resource</center>",
@@ -210,7 +271,7 @@ class BodAssistant:
             else: target_serial = None
             if targeted and not target_serial:
                 UnsetAlias(alias)
-                return CraftResourceItem(targeted.ID, targeted.Name, targeted.Hue, 50, 300)
+                return CraftResourceItem(targeted.ID, resource_key, targeted.Hue, 50, 300)
             if not target_serial: continue
 
             targeted = Engine.Items.GetItem(target_serial)
@@ -334,3 +395,11 @@ class BodAssistantConfig:
             if "exceptional" in property.Text.lower(): return True
         
         return False
+
+    
+    def VerifyOverweight(self):
+        Logger.Trace("Checking weight")
+        if DiffWeight() < 50: return False # If less than 50 stones are free, stop crafting
+
+        Logger.Trace("Weight is fine")
+        return True
