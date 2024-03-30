@@ -2,7 +2,7 @@
 Name: BOD Assistant
 Description: Used to automate monotonous parts of completing Bulk Order Deeds
 Author: Tsai (Ultima Adventures)
-Version: v0.4
+Version: v0.5
 """
 
 from services.bodassistant import BodAssistant

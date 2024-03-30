@@ -4,11 +4,11 @@ from services.stock import StockService
 from utility.alias import AliasUtils
 from utility.interaction import InteractionUtils
 from models.craftresourceitem import CraftResourceItem
+from utility.item import ItemUtils
 
 from Assistant import Engine
 from ClassicAssist.Data.Macros.Commands.TargetCommands import CancelTarget
 from ClassicAssist.Data.Macros.Commands.ObjectCommands import FindType
-from utility.item import ItemUtils
 
 
 class BodAssistant:    
@@ -96,14 +96,6 @@ class BodAssistant:
             if bod == None: return False # Failed to create
 
             while 0 < bod.GetRemainingAmount(item_to_craft):
-                if not config.VerifyOverweight():
-                    InteractionUtils.Prompt(
-                        "<center>Weight failure</center>",
-                        "The weight check has failed.",
-                        "Press any button to continue."
-                    )
-                    continue
-
                 # Open BOD Gump if necessary
                 if not GumpExists(config.bod_gump_id):
                     UseObject(bod_item.Serial)
@@ -124,7 +116,7 @@ class BodAssistant:
                 ClearIgnoreList()
                 while FindType(graphic_to_target, -1, "backpack"):
                     candidate = Engine.Items.GetItem(GetAlias("found"))
-                    if not config.AfterItemCrafted(candidate, bod, resources[0]): 
+                    if not config.ShouldCombineItem(candidate, bod, resources[0]): 
                         IgnoreObject(candidate.Serial)
                         continue
 
@@ -154,10 +146,11 @@ class BodAssistant:
                         Pause(1000) # Throttle to reduce spamming
                         continue # Comment this out if you want to use the remaining resources in your backpack
 
-                    if not config.CraftItem(item_to_craft):
-                        Logger.Error("Failed to craft item. Enabling war mode")
-                        WarMode("on")
+                    if not config.BeforeItemCrafted(resources):
+                        Logger.Error("Failed item crafting prerequisite")
                         continue
+
+                    config.CraftItem(item_to_craft)
             
             return True
 
@@ -293,7 +286,7 @@ class BodAssistant:
         character_alias = AliasUtils.CreateCharacterAlias(alias)
         
         if FindAlias(character_alias):
-            container = Engine.Items.GetItem(GetAlias(alias))
+            container = Engine.Items.GetItem(GetAlias(character_alias))
             if container != None:
                 # Prompt User for affirmation
                 confirmed = InteractionUtils.Prompt(
@@ -350,17 +343,17 @@ class BodAssistantConfig:
     ]
     graphic_id_map = { # Only when searching by name doesn't work or has false positives
         # Blacksmithing
-        'chainmail coif': 0x13BB,
-        'chainmail tunic': 0x13BF,
-        'chainmail leggings': 0x13BE,
+        "chainmail coif": 0x13BB,
+        "chainmail tunic": 0x13BF,
+        "chainmail leggings": 0x13BE,
 
-        'ringmail sleeves': 0x13EE,
-        'ringmail leggings': 0x13F0,
-        'ringmail tunic': 0x13EC,
+        "ringmail sleeves": 0x13EE,
+        "ringmail leggings": 0x13F0,
+        "ringmail tunic": 0x13EC,
 
         # Fletching
-        'crossbow': 0xF50,
-        'bow': 0x13B2,
+        "crossbow": 0xF50,
+        "bow": 0x13B2,
     }
 
 
@@ -369,37 +362,44 @@ class BodAssistantConfig:
         return
 
 
-    def CraftItem(self, item_name):
+    def BeforeItemCrafted(self, resources):
+        # If less than 50 stones are free, stop crafting
+        if DiffWeight() < 50:
+            InteractionUtils.Prompt(
+                "<center>Weight failure</center>",
+                "The weight check has failed.",
+                "Press any button to continue."
+            )
+            return False # Skip the crafting attempt
+
+        # Check if the crafting gump is open
         if not GumpExists(self.crafting_gump_id):
             confirmed = InteractionUtils.Prompt(
                 "<center>Crafting Gump</center>",
                 "Failed to find Crafting Gump.",
                 "Press OKAY button when it is open."
             )
+
             # Optimization: Maybe you want to re-open the crafting gump
             # Optimization: Maybe you want to craft tools
             return confirmed
+        
+        return True
 
+
+    def CraftItem(self, item_name):
         # Optimization: Maybe you want to take `item_name` and map it directly to a item id instead of simply `make last`
         ReplyGump(self.crafting_gump_id, 21) # Make last
         WaitForGump(self.crafting_gump_id, 5000)
 
-        return True
 
-
-    def AfterItemCrafted(self, item_of_crafted_type, bod, primary_resource):
+    def ShouldCombineItem(self, item_of_crafted_type, bod, primary_resource):
         if 0 <= primary_resource.hue and item_of_crafted_type.Hue != primary_resource.hue: return False
         if not bod.require_exceptional: return True
 
         for property in item_of_crafted_type.Properties:
             if "exceptional" in property.Text.lower(): return True
         
+        # Optimization: The BOD requires Exceptional but the item isn't Exceptional
+        
         return False
-
-    
-    def VerifyOverweight(self):
-        Logger.Trace("Checking weight")
-        if DiffWeight() < 50: return False # If less than 50 stones are free, stop crafting
-
-        Logger.Trace("Weight is fine")
-        return True
