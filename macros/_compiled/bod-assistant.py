@@ -1,6 +1,6 @@
 """
 Name: BOD Assistant
-Description: Used to automate monotonous parts of completing Bulk Order Deeds
+Description: Used to automate monotonous parts of completing Bulk Order Deeds.
 Author: Tsai (Ultima Adventures)
 Version: v0.5
 """
