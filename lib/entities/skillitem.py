@@ -25,4 +25,5 @@ class LumberjackSkillItem:
     Pine          = _SkillItemFactory.create_lumberjack(WoodResourceType.Pine, 90, 115.0)
     Rosewood      = _SkillItemFactory.create_lumberjack(WoodResourceType.Rosewood, 95, 120.0)
     Walnut        = _SkillItemFactory.create_lumberjack(WoodResourceType.Walnut, 99, 124.0)
+    Petrified     = _SkillItemFactory.create_lumberjack(WoodResourceType.Petrified, 99.9, 124.9)
     Elven         = _SkillItemFactory.create_lumberjack(WoodResourceType.Elven, 100.1, 125.1)

@@ -26,6 +26,7 @@ class UserOptions:
         [1, LumberjackSkillItem.Pine],
         [1, LumberjackSkillItem.Rosewood],
         [1, LumberjackSkillItem.Walnut],
+        [1, LumberjackSkillItem.Petrified],
 
         # Are you really sure you want to change this?
         [1, LumberjackSkillItem.Elven],

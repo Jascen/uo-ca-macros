@@ -49,5 +49,5 @@ class WoodResourceType:
     Ghost          = ResourceType("ghost",      2498)
     Rosewood       = ResourceType("rosewood",   2115)
     Walnut         = ResourceType("walnut",     1872)
-    Petrified      = ResourceType("petrified",  2708) # TODO: Verify
+    Petrified      = ResourceType("petrified",  2708)
     Elven          = ResourceType("elven",      2618)
