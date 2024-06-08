@@ -1,3 +1,15 @@
+"""
+Name: Equipment calculator
+Description: Used to add up all Property values on a paperdoll
+Author: Tsai (Ultima Adventures)
+Version: v2.0
+
+*****Warnings*****
+- It does not handle Diminishing returns
+  - 70 resist should be approximately 128 total resist
+*****Warnings*****
+"""
+
 import clr
 import System
 clr.AddReference("System.Core")
@@ -56,6 +68,22 @@ xaml = """
 </Grid>
 """
 
+
+class InteractionUtils:
+    @classmethod
+    def Prompt(cls, title, content, footer):
+        result = ConfirmPrompt(
+            "<center>{}</center>".format(title)
+            + content
+            + "<br><br>"
+            + footer
+            )
+        
+        Pause(350) # Small pause to let the user realize the window has changed
+
+        return result
+
+
 class Property:
     def __init__(self, name, value):
         self.Name = name
@@ -76,9 +104,38 @@ class XamlWindow(Window):
         self.Height = 600
         self.listView = self.Content.FindName("listView")
         self.refreshButton = self.Content.FindName("refreshButton")
+        self.mobile = None
         self.refreshButton.Click += self.refresh
-        self.refresh()
 
+    def initialize(self):
+        confirmed = False
+        target_serial = None
+        targeted = None
+        while True:
+            alias = '$mobile_target'
+            if not confirmed: target_serial = PromptMacroAlias(alias)
+            else: target_serial = None
+            if targeted and not target_serial: break
+            if not target_serial: continue
+
+            targeted = Engine.Mobiles.GetMobile(GetAlias(alias))
+            if not targeted: continue
+
+            # Auto-confirm if targeting self
+            if targeted.Serial == Engine.Player.Serial: break
+
+            confirmed = InteractionUtils.Prompt(
+                "<center>Confirm Mobile</center>",
+                "{}<br>".format(targeted.Name.upper()) +
+                "The paperdoll must be open to get latest equipment.",
+                "Press OKAY to confirm your target."
+            )
+            if not confirmed: targeted = None
+            UseObject(targeted.Serial)
+            Pause(1000)
+
+        self.mobile = targeted
+        self.refresh()
 
     def refresh(self, sender = None, event = None):
         self.listView.Items.Clear()
@@ -86,7 +143,7 @@ class XamlWindow(Window):
         cliloc_value_total = {}
         cliloc_map = {}
         for layer in layers:
-            serial = Engine.Player.GetLayer(layer)
+            serial = self.mobile.GetLayer(layer)
             if not serial: continue
 
             item = Engine.Items.GetItem(serial)
@@ -130,6 +187,7 @@ class XamlWindow(Window):
 def ShowWindow():
     try:
         c = XamlWindow()
+        c.initialize()
         c.ShowDialog()
     except Exception as e:
         # if you don't catch these, an exception will likely take down CUO/CA
