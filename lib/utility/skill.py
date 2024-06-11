@@ -1,10 +1,19 @@
+from ClassicAssist.Data.Macros.Commands.JournalCommands import ClearJournal, InJournal
 from ClassicAssist.Data.Macros.Commands.MainCommands import Pause
+from ClassicAssist.Data.Macros.Commands.ObjectCommands import FindObject
 from ClassicAssist.Data.Macros.Commands.TargetCommands import CancelTarget, WaitForTarget, Target
 from ClassicAssist.Data.Macros.Commands.SkillCommands import UseSkill, Skill, SkillCap
 from ClassicAssist.Data.Macros.Commands.AliasCommands import FindAlias, PromptMacroAlias
 
 
 class SkillUtils:
+    @classmethod
+    def ArmsLore(cls, serial_or_alias, retry = True):
+        if retry: ClearJournal()
+
+        cls.Target("Arms Lor", serial_or_alias, retry, 1000, lambda: not InJournal("It looks unused.") or FindObject(serial_or_alias))
+
+
     @staticmethod
     def EnsureTarget(skill_name, serial_or_alias, loop, delay, continue_predicate = None):
         if not FindAlias(serial_or_alias):
