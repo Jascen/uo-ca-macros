@@ -129,6 +129,83 @@ WoodlandLongbow        = CraftMenuItem(0x2d1e, 15, 51, "woodland longbow")
 
 
 # *************************
+# Inscription
+# *************************
+## ***** First Circle *****
+ReactiveArmor          = CraftMenuItem(0x00, 1, 2, "reactive armor")
+Clumsy                 = CraftMenuItem(0x00, 1, 9, "clumsy")
+CreateFood             = CraftMenuItem(0x00, 1, 16, "create food")
+Feeblemind             = CraftMenuItem(0x00, 1, 23, "feeblemind")
+Heal                   = CraftMenuItem(0x00, 1, 30, "heal")
+MagicArrow             = CraftMenuItem(0x00, 1, 37, "magic arrow")
+NightSight             = CraftMenuItem(0x00, 1, 44, "night sight")
+weaken                 = CraftMenuItem(0x00, 1, 51, "weaken")
+## ***** Second Circle *****
+Agility                = CraftMenuItem(0x00, 8, 2, "agility")
+Cunning                = CraftMenuItem(0x00, 8, 9, "cunning")
+Cure                   = CraftMenuItem(0x00, 8, 16, "cure")
+Harm                   = CraftMenuItem(0x00, 8, 23, "harm")
+MagicTrap              = CraftMenuItem(0x00, 8, 30, "magic trap")
+MagicUntrap            = CraftMenuItem(0x00, 8, 37, "magic untrap")
+Protection             = CraftMenuItem(0x00, 8, 44, "protection")
+Strength               = CraftMenuItem(0x00, 8, 51, "strength")
+## ***** Third Circle *****
+Bless                  = CraftMenuItem(0x00, 15, 2, "bless")
+Fireball               = CraftMenuItem(0x00, 15, 9, "fireball")
+MagicLock              = CraftMenuItem(0x00, 15, 16, "magic lock")
+Poison                 = CraftMenuItem(0x00, 15, 23, "poison")
+Telekinesis            = CraftMenuItem(0x00, 15, 30, "telekinesis")
+Teleport               = CraftMenuItem(0x00, 15, 37, "teleport")
+Unlock                 = CraftMenuItem(0x00, 15, 44, "unlock")
+WallOfStone            = CraftMenuItem(0x00, 15, 51, "wall of stone")
+## ***** Fourth Circle *****
+ArchCure               = CraftMenuItem(0x00, 22, 2, "arch cure")
+ArchProtection         = CraftMenuItem(0x00, 22, 9, "arch protection")
+Curse                  = CraftMenuItem(0x00, 22, 16, "curse")
+FireField              = CraftMenuItem(0x00, 22, 23, "fire field")
+GreaterHeal            = CraftMenuItem(0x00, 22, 30, "greater heal")
+Lightning              = CraftMenuItem(0x00, 22, 37, "lightning")
+ManaDrain              = CraftMenuItem(0x00, 22, 44, "mana drain")
+Recall                 = CraftMenuItem(0x00, 22, 51, "recall")
+## ***** Fifth Circle *****
+BladeSpirits           = CraftMenuItem(0x00, 29, 2, "blade spirits")
+DispelField            = CraftMenuItem(0x00, 29, 9, "dispel field")
+Incognito              = CraftMenuItem(0x00, 29, 16, "incognito")
+MagicReflection        = CraftMenuItem(0x00, 29, 23, "magic reflection")
+MindBlast              = CraftMenuItem(0x00, 29, 30, "mind blast")
+Paralyze               = CraftMenuItem(0x00, 29, 37, "paralyze")
+PoisonField            = CraftMenuItem(0x00, 29, 44, "poison field")
+SummonCreature         = CraftMenuItem(0x00, 29, 51, "summon creature")
+## ***** Sixth Circle *****
+Dispel                 = CraftMenuItem(0x00, 36, 2, "dispel")
+EnergyBolt             = CraftMenuItem(0x00, 36, 9, "energy bolt")
+Explosion              = CraftMenuItem(0x00, 36, 16, "explosion")
+Invisibility           = CraftMenuItem(0x00, 36, 23, "invisibility")
+Mark                   = CraftMenuItem(0x00, 36, 30, "mark")
+MassCurse              = CraftMenuItem(0x00, 36, 37, "mass curse")
+ParalyzeField          = CraftMenuItem(0x00, 36, 44, "paralyze field")
+Reveal                 = CraftMenuItem(0x00, 36, 51, "reveal")
+## ***** Seventh Circle *****
+ChainLightning         = CraftMenuItem(0x00, 43, 2, "chain lightning")
+EnergyField            = CraftMenuItem(0x00, 43, 9, "energy field")
+Flamestrike            = CraftMenuItem(0x00, 43, 16, "flamestrike")
+GateTravel             = CraftMenuItem(0x00, 43, 23, "gate travel")
+ManaVampire            = CraftMenuItem(0x00, 43, 30, "mana vampire")
+MassDispel             = CraftMenuItem(0x00, 43, 37, "mass dispel")
+MeteorSwarm            = CraftMenuItem(0x00, 43, 44, "meteor swarm")
+Polymorph              = CraftMenuItem(0x00, 43, 51, "polymorph")
+## ***** Eigth Circle *****
+Earthquake             = CraftMenuItem(0x00, 50, 2, "earthquake")
+EnergyVortex           = CraftMenuItem(0x00, 50, 9, "energy vortex")
+Resurrection           = CraftMenuItem(0x00, 50, 16, "resurrection")
+SummonAirElemental     = CraftMenuItem(0x00, 50, 23, "summon air elemental")
+SummonDaemon           = CraftMenuItem(0x00, 50, 30, "summon daemon")
+SummonEarthElemental   = CraftMenuItem(0x00, 50, 37, "summon earth elemental")
+SummonFireElemental    = CraftMenuItem(0x00, 50, 44, "summon fire elemental")
+SummonWaterElemental   = CraftMenuItem(0x00, 50, 51, "summon water elemental")
+
+
+# *************************
 # Tailoring
 # *************************
 ## ***** Hats *****
