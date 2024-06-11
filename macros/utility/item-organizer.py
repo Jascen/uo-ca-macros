@@ -2,7 +2,7 @@
 Name: Item Organizer
 Description: Used to move items that pass the configured Filter Criteria from a Source container to a Destination container.
 Author: Tsai (Ultima Adventures)
-Version: v1.4
+Version: v1.5
 """
 
 from Assistant import Engine
@@ -123,7 +123,7 @@ def GetOrganizers():
             All(
                 Any(
                     "circlet",
-                    *List.Jewelry,
+                    FixedLists.Jewelry,
                 ),
                 Any(
                     # Name, Weight, Durability ... nothing else
@@ -271,13 +271,13 @@ def GetOrganizers():
         ]),
         Organizer(source, UserContainers.Magic_Instruments, [
             All(
-                Any(*List.Instruments),
+                Any(FixedLists.Instruments),
                 Any(
                     # Desirable Properties
                     "+", # Skill bonus
                     "Lower Reagent",
                     "Lower Mana",
-                    *List.Slayers
+                    FixedLists.Slayers
                 ),
             ),
         ]),
@@ -327,7 +327,7 @@ from services.filter.utilities import *
 #------------------------
 # Lists of Items
 #------------------------
-from services.filter.lists import List
+from services.filter.fixedlists import FixedLists
 
 
 #------------------------
