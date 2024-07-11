@@ -2,7 +2,7 @@
 Name: Special Ability Spammer
 Description: Used to keep a special ability active
 Author: Tsai (Ultima Adventures)
-Version: v1.0
+Version: v1.1
 """
 
 import System
@@ -21,13 +21,23 @@ class UserOptions:
 class AbilityGump:  
     Special_Abilities_Gump_Id = 0xb2741653
     Ability_Set_Image_Id = 9780
+    Ability_Unset_Image_Id = 9781
     
     @classmethod
     def GetAbilities(cls):
         gump = cls.GetGump()
         if gump == None: return []
         
-        return gump.GetElementsByType(ElementType.text).Select(lambda g: g.Text).ToArray()
+        text_items = gump.GetElementsByType(ElementType.text).Select(lambda g: g.Text).ToArray()
+        if len(text_items): return text_items
+        
+        abilities = []
+        for i in range(6):
+            image = cls.GetAbilityImage(i)
+            if image == cls.Ability_Set_Image_Id or image == cls.Ability_Unset_Image_Id:
+                abilities.append("Ability {}".format(i))
+        
+        return abilities
     
     @classmethod
     def GetGump(cls):
@@ -39,18 +49,25 @@ class AbilityGump:
         return tuple[1]
 
     @classmethod
-    def IsAbilitySet(cls, i):
+    def GetAbilityImage(cls, i):
         gump = cls.GetGump()
-        if gump == None: return False
+        if gump == None: return None
         
         x_target = 15
         y_base = 8
         y_offset = 41
         y_target = y_base + y_offset * i
         element = gump.GetElementByXY(x_target, y_target)
-        if element == None: return False
+        if element == None: return None
         
-        return element.ElementID == cls.Ability_Set_Image_Id
+        return element.ElementID
+
+    @classmethod
+    def IsAbilitySet(cls, i):
+        image = cls.GetAbilityImage(i)
+        if image == None: return False
+
+        return image == cls.Ability_Set_Image_Id
     
     @classmethod
     def SetAbility(cls, i):
@@ -61,6 +78,11 @@ class AbilityGump:
 
 
 def Main():
+    Msg("[sad") # Ensure the gump is opened
+    if not WaitForGump(AbilityGump.Special_Abilities_Gump_Id, 5000) and not AbilityGump.GetGump():
+        SysMessage("Failed to detect ability gump")
+        return
+
     ability_list = AbilityGump.GetAbilities()
 
     if UserOptions.Ability_To_Spam == None:
