@@ -2,7 +2,7 @@
 Name: Special Ability Spammer
 Description: Used to keep a special ability active
 Author: Tsai (Ultima Adventures)
-Version: v1.1
+Version: v1.2
 """
 
 import System
@@ -68,11 +68,18 @@ class AbilityGump:
         if image == None: return False
 
         return image == cls.Ability_Set_Image_Id
+
+    @classmethod
+    def IsAbilityUnset(cls, i):
+        image = cls.GetAbilityImage(i)
+        if image == None: return False
+
+        return image == cls.Ability_Unset_Image_Id
     
     @classmethod
     def SetAbility(cls, i):
         if cls.IsAbilitySet(i): return False
-        
+
         ReplyGump(cls.Special_Abilities_Gump_Id, i)
         return True
 
@@ -93,8 +100,9 @@ def Main():
         index = UserOptions.Ability_To_Spam - 1 # Zero indexed
 
     while not Dead():
-        if AbilityGump.SetAbility(index + 1):
-            SysMessage("Set ability {}".format(ability_list[index]))
+        if AbilityGump.IsAbilityUnset(index + 1): # Guards against button no longer existing
+            if AbilityGump.SetAbility(index + 1):
+                SysMessage("Set ability {}".format(ability_list[index]))
         Pause(UserOptions.Check_Interval)
 
 
