@@ -139,7 +139,7 @@ Feeblemind             = CraftMenuItem(0x00, 1, 23, "feeblemind")
 Heal                   = CraftMenuItem(0x00, 1, 30, "heal")
 MagicArrow             = CraftMenuItem(0x00, 1, 37, "magic arrow")
 NightSight             = CraftMenuItem(0x00, 1, 44, "night sight")
-weaken                 = CraftMenuItem(0x00, 1, 51, "weaken")
+Weaken                 = CraftMenuItem(0x00, 1, 51, "weaken")
 ## ***** Second Circle *****
 Agility                = CraftMenuItem(0x00, 8, 2, "agility")
 Cunning                = CraftMenuItem(0x00, 8, 9, "cunning")

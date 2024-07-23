@@ -12,7 +12,7 @@ Spells = [
         Heal,
         MagicArrow,
         NightSight,
-        weaken,
+        Weaken,
     ],
     [
         Agility,
