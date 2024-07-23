@@ -99,7 +99,7 @@ class CraftServiceBase:
         self.stock_service = stock_service
         self.crafting_gump_id = 0x38920abd # TODO: Same for everyone??
         self.gump_timeout = 5000
-        self.short_pause = 500
+        self.short_pause = 1000
         # Always use Iron Ingots for crafting Tools using Tinkering
         iron_ingot = IngotResource.Iron.clone()
         iron_ingot.min_pack_amount = 10
@@ -158,7 +158,7 @@ class CraftServiceBase:
         # Reopen after crafting a new one
         Pause(self.short_pause)
         UseType(self.crafting_tool.graphic, self.crafting_tool.hue)
-        if not WaitForGump(self.crafting_gump_id, self.gump_timeout): return False
+        if not GumpExists(self.crafting_gump_id) and not WaitForGump(self.crafting_gump_id, self.gump_timeout): return False
 
         return True
 
@@ -177,10 +177,10 @@ class CraftServiceBase:
 
         if not FindType(TinkerTool.graphic, -1, "backpack", TinkerTool.hue): return False # Very bad
         
-        if GumpExists(self.crafting_gump_id): ReplyGump(self.crafting_gump_id, 0)  # Close gump
-        
         # Always keep at least three
         while CountType(TinkerTool.graphic, "backpack", TinkerTool.hue) < 3:
+            if GumpExists(self.crafting_gump_id): ReplyGump(self.crafting_gump_id, 0)  # Close gump
+
             SysMessage("Making Tinker Tools...")
             self.__Craft(TinkerTool, TinkerTool, self.iron_ingot)
 
@@ -194,16 +194,17 @@ class CraftServiceBase:
 
         Logger.Log("Crafting item ({})...".format(item.name))
         # Make sure correct gump is open
+        Pause(self.short_pause) # Force delay for using an item
         UseType(tool.graphic, tool.hue)
         if not WaitForGump(self.crafting_gump_id, self.gump_timeout): return False
 
         # Craft item
         ReplyGump(self.crafting_gump_id, item.button_one)
-        WaitForGump(self.crafting_gump_id, self.gump_timeout)
+        if not WaitForGump(self.crafting_gump_id, self.gump_timeout): return False
         ReplyGump(self.crafting_gump_id, item.button_two)
-        WaitForGump(self.crafting_gump_id, self.gump_timeout)
+        if not WaitForGump(self.crafting_gump_id, self.gump_timeout): return False
 
-        Pause(self.short_pause)
+        # Pause(self.short_pause) # TODO: Can this be permanently removed?
 
         return True
 
