@@ -1,8 +1,8 @@
 """
 Name: BOD Assistant
-Description: Used to automate monotonous parts of completing Bulk Order Deeds.
+Description: Used to automate monotonous parts of completing Bulk Order Deeds
 Author: Tsai (Ultima Adventures)
-Version: v0.5
+Version: v0.6
 """
 
 from Assistant import Engine
@@ -466,19 +466,20 @@ class BodAssistant:
             bod = BODFactory.Create(bod_item)
             if bod == None: return False # Failed to create
 
+            bod_gump_id = config.bod_large_gump_id if bod.is_large else config.bod_small_gump_id
             while 0 < bod.GetRemainingAmount(item_to_craft):
                 # Open BOD Gump if necessary
-                if not GumpExists(config.bod_gump_id):
+                if not GumpExists(bod_gump_id):
                     UseObject(bod_item.Serial)
                     Pause(1000)
 
-                    if not GumpExists(config.bod_gump_id) and not WaitForGump(config.bod_gump_id, 5000):
+                    if not GumpExists(bod_gump_id) and not WaitForGump(bod_gump_id, 5000):
                         Logger.Error("Failed to detect BOD gump.")
                         continue
 
                 CancelTarget()
                 if not TargetExists():
-                    ReplyGump(config.bod_gump_id, 2) # Press Combine
+                    ReplyGump(bod_gump_id, 2) # Press Combine
                     WaitForTarget(1000)
                     if not TargetExists():
                         Logger.Error("Failed to select Combine.")
@@ -500,8 +501,8 @@ class BodAssistant:
 
                 # Close
                 CancelTarget()
-                if GumpExists(config.bod_gump_id):
-                    ReplyGump(config.bod_gump_id, 0) # Close
+                if GumpExists(bod_gump_id):
+                    ReplyGump(bod_gump_id, 0) # Close
 
                 # TODO: Optimize this. The item is refreshed but we're brute-force rebuilding the BOD to "refresh" it
                 bod = BODFactory.Create(bod_item) # Get the very latest
@@ -706,11 +707,53 @@ def CreateBoard(name, hue):
 
 
 class BodAssistantConfig:
-    bod_gump_id = 0xa125b54a
+    bod_large_gump_id = 0xa125b54a
+    bod_small_gump_id = 0x5afbd742
     bod_type_id = 0x2258
     crafting_gump_id = 0x38920abd
     resources = [ # Fill this out to help for automagic resource selection
+        CreateIngot("dull copper ingots", 2741),
+        CreateIngot("shadow ingots",      2739),
+        CreateIngot("copper ingots",      2840),
+        CreateIngot("bronze ingots",      2236),
+        CreateIngot("golden ingots",      2458),
+        CreateIngot("agapite ingots",     2794),
         CreateIngot("verite ingots",      2141),
+        CreateIngot("valorite ingots",    2397),
+        CreateIngot("nepturite ingots",   2376),
+        CreateIngot("obsidian ingots",    1986),
+        CreateIngot("steel ingots",       2463),
+        CreateIngot("brass ingots",       2451),
+        CreateIngot("mithril ingots",     2928),
+        CreateIngot("xormite ingots",     1991),
+        CreateIngot("dwarven ingots",     1788),
+
+        CreateBoard("ash wood",           1191),
+        CreateBoard("cherry wood",        1863),
+        CreateBoard("ebony wood",         2412),
+        CreateBoard("golden oak wood",    2010),
+        CreateBoard("hickory wood",       1045),
+        CreateBoard("mahogany wood",      2312),
+        CreateBoard("driftwood",          2419),
+        CreateBoard("oak wood",           1810),
+        CreateBoard("pine wood",          461),
+        CreateBoard("ghost wood",         2498),
+        CreateBoard("rosewood",           2115),
+        CreateBoard("walnut wood",        1872),
+        CreateBoard("petrified wood",     2708),
+        CreateBoard("elven wood",         2618),
+
+        CreateLeather("lizard leather",   2736),
+        CreateLeather("serpent leather",  2841),
+        CreateLeather("necrotic leather", 1968),
+        CreateLeather("volcanic leather", 2873),
+        CreateLeather("frozen leather",   2907),
+        CreateLeather("deep sea leather", 2747),
+        CreateLeather("goliath leather",  2154),
+        CreateLeather("draconic leather", 2740),
+        CreateLeather("hellish leather",  2810),
+        CreateLeather("dinosaur leather", 2333),
+        CreateLeather("alien leather",    2300),
     ]
     graphic_id_map = { # Only when searching by name doesn't work or has false positives
         # Blacksmithing
@@ -722,10 +765,76 @@ class BodAssistantConfig:
         "ringmail leggings": 0x13F0,
         "ringmail tunic": 0x13EC,
 
+        # Carpentry
+
         # Fletching
         "crossbow": 0xF50,
         "bow": 0x13B2,
+
+        # Tailoring
+        "studded legs": 0x13DA,
+        "studded tunic": 0x13DB,
+        "studded sleeves": 0x13DC,
+        "female leather armor": 0x1C06,
+        "studded armor": 0x1C02,
     }
+
+
+    def __EnsureElixir(self, resources):
+        if not UserOptions.Require_Elixir: return True
+
+        skill = None
+        for r in resources:
+            if "wood" in r.name: skill = "Fletchin" # Assumes Fletching only right now
+            # if ("wood" in r.name): skill = "Carpentr" # TODO: Carpentry
+            elif ("ingot" in r.name ): skill = "Blacksmithin" # Tongs
+            elif ("leather" in r.name): skill = "Tailorin" # Sewing Kits
+            if skill: break
+
+        if skill:
+            if 125 <= round(Skill(skill), 1): return True
+
+            success = False
+            if skill == "Fletchin": success = FindType(0x1fd9, 0, "backpack", 105)
+            # elif skill == "Carpentr": success = FindType(0x1fd9, 0, "backpack", 1150)
+            # elif skill == "Blacksmithin": success = FindType(0x1fd9, 0, "backpack", )
+            # elif skill == "Tailorin": success = FindType(0x1fd9, 0, "backpack", )
+
+            if success:
+                UseObject("found")
+                Pause(1000)
+            if 125 <= round(Skill(skill), 1): return True
+
+        InteractionUtils.Prompt(
+            "<center>Elixir</center>",
+            "Failed to apply Elixir.",
+            "Press any button to continue."
+        )
+
+        return False
+
+
+    def __EnsureTool(self, resources):
+        if not UserOptions.Auto_Use_New_Tool: return GumpExists(self.crafting_gump_id)
+
+        # Try to automagically open the gump
+        tool = None
+        for r in resources:
+            if "wood" in r.name: tool = 0x1f2c # Assumes Fletching only right now
+            # if ("wood" in r.name): tool = 0x0 # TODO: Carpentry
+            elif ("ingot" in r.name ): tool = 0xfbb # Tongs
+            elif ("leather" in r.name): tool = 0x4c81 # Sewing Kits
+            if tool: break
+
+        if tool and FindType(tool, 0, "backpack", -1):
+            if GumpExists(self.crafting_gump_id): return True
+
+            UseObject("found")
+            Pause(1000)
+
+            if GumpExists(self.crafting_gump_id) or WaitForGump(self.crafting_gump_id, 5000): return True
+        
+        return False
 
 
     def AfterBODCompleted(self, bod_item):
@@ -745,6 +854,8 @@ class BodAssistantConfig:
 
         # Check if the crafting gump is open
         if not GumpExists(self.crafting_gump_id):
+            if self.__EnsureTool(resources): return True
+
             confirmed = InteractionUtils.Prompt(
                 "<center>Crafting Gump</center>",
                 "Failed to find Crafting Gump.",
@@ -754,6 +865,8 @@ class BodAssistantConfig:
             # Optimization: Maybe you want to re-open the crafting gump
             # Optimization: Maybe you want to craft tools
             return confirmed
+
+        if not self.__EnsureElixir(resources): return False
         
         return True
 
@@ -774,6 +887,11 @@ class BodAssistantConfig:
         # Optimization: The BOD requires Exceptional but the item isn't Exceptional
         
         return False
+
+
+class UserOptions:
+    Require_Elixir = False # If True, stop executing when no Elixirs are found
+    Auto_Use_New_Tool = False # If the crafting gump is not detected, try to open it.
 
 
 def Main():
