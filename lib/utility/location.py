@@ -12,6 +12,9 @@ class Location:
         if z == None: z = 0
         self.z = z
 
+    def __str__(self):
+        return "{}, {}".format(self.x, self.y)
+
 
 class LocationUtils:
     @classmethod
