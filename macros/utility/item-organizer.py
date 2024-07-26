@@ -415,7 +415,7 @@ class ItemUtils:
         return False
 
 
-from utility.movement import Runner
+from utility.runner import Runner
 
 
 #------------------------
