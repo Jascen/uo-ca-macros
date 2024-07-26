@@ -1,5 +1,5 @@
 # How to use
-- Copy the "lib" folder into the "Modules" folder that's next to "ClassicAssist.dll" for your ClassicAssist installation
+- Copy the contents "lib" folder and paste it into the "Modules" folder that's next to "ClassicAssist.dll" for your ClassicAssist installation
   - **Warning**: Once ClassicAssist loads a file from this folder, it will not reload the file until application restart or if your script calls [`reload()`](https://docs.python.org/2/library/functions.html#reload)
 ```python
 import entities.craftmenuitem
